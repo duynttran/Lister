@@ -14,7 +14,7 @@
             android:id="@+id/newList"
             app:destination="@id/list" />
         <action
-            android:id="@+id/editList"
+            android:id="@+id/editListScreenTitle"
             app:destination="@id/list" />
     </fragment>
 

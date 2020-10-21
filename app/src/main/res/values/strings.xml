@@ -3,4 +3,7 @@
     <string name="shopping_lists_title">SHOPPING LISTS</string>
     <string name="add">+</string>
     <string name="list_name_prompt">ENTER LIST NAME</string>
+    <string name="edit_list">EDIT LIST</string>
+    <string name="delete">DELETE</string>
+    <string name="currentnameoflist">currentNameOfList</string>
 </resources>
