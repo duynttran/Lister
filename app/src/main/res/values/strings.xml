@@ -6,4 +6,5 @@
     <string name="edit_list">EDIT LIST</string>
     <string name="delete">DELETE</string>
     <string name="currentnameoflist">currentNameOfList</string>
+    <string name="enterButton"><![CDATA[>]]></string>
 </resources>

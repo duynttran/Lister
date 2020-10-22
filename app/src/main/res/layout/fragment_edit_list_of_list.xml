@@ -44,4 +44,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout4" />
 
+    <Button
+        android:id="@+id/enterButton"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:text="@string/enterButton"
+        app:layout_constraintBottom_toBottomOf="@+id/textInputLayout4"
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout4"
+        app:layout_constraintTop_toTopOf="@+id/textInputLayout4" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
