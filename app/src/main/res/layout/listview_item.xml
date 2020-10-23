@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:orientation="horizontal"
+    android:padding="5dp">
+
+    <Spinner
+        android:id="@+id/item_count"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1.5"
+        android:drawSelectorOnTop="true"
+        android:entries="@array/count_array"/>
+
+    <EditText
+        android:id="@+id/item_name"
+        android:layout_width="608dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.5"
+        android:ems="10"
+        android:hint="@string/item_name"
+        android:inputType="text"
+        android:autofillHints="@string/item_name" />
+
+    <EditText
+        android:id="@+id/item_price"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:inputType="numberDecimal"
+        android:layout_weight="1.5"
+        android:ems="10"
+        android:autofillHints="0.00"
+        android:hint="@string/default_price"/>
+
+    <ImageButton
+        android:id="@+id/photo_button"
+        android:layout_width="52dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_camera"
+        android:contentDescription="@string/camera_button_description" />
+
+</LinearLayout>
