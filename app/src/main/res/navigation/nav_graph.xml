@@ -11,18 +11,24 @@
         android:label="@string/app_name"
         tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/newList"
-            app:destination="@id/list" />
-        <action
-            android:id="@+id/editListScreenTitle"
-            app:destination="@id/list" />
+            android:id="@+id/editList"
+            app:destination="@id/list">
+            <argument
+                android:name="list"
+                app:argType="string"
+                android:defaultValue="" />
+        </action>
     </fragment>
 
     <fragment
         android:id="@+id/list"
         android:name="com.example.lister.ListFragment"
-        android:label="New List"
+        android:label="List"
         tools:layout="@layout/fragment_list">
+        <argument
+            android:name="list"
+            app:argType="string"
+            android:defaultValue="" />
     </fragment>
 
 </navigation>
