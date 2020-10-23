@@ -25,6 +25,8 @@ import java.util.Objects;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
+    List<String> listOfListsArr;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d("Lifecycle", "HomeFragment - onCreate");
@@ -40,7 +42,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         // Populate list of lists
-        List<String> listOfListsArr = new ArrayList<>();
+        listOfListsArr = new ArrayList<>();
         listOfListsArr.add("Test List");
         listOfListsArr.add("Test List 2");
         listOfListsArr.add("Test List 3");
@@ -61,7 +63,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v){
         if(v == v.findViewById(R.id.newListButton)) {
             Log.d("Lifecycle", "HomeFragment - clicked newListButton");
-            Navigation.findNavController(v).navigate(R.id.newList);
+            HomeFragmentDirections.EditList action = HomeFragmentDirections.editList();
+            Navigation.findNavController(v).navigate(action);
         } else {
             Log.d("Lifecycle", "HomeFragment - onClick");
             //Clicked on an already created list or maybe settings button or something.
@@ -86,7 +89,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Launch list fragment
-                Navigation.findNavController(view).navigate(R.id.newList);
+                HomeFragmentDirections.EditList action = HomeFragmentDirections.editList();
+                action.setList(listOfListsArr.get(i));
+                Navigation.findNavController(view).navigate(action);
             }
         });
     }
