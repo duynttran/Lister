@@ -70,7 +70,7 @@ public class ListFragment extends Fragment{
             }
         });
 
-        // Populate list of lists
+        // Populate items list
         itemsList = new ArrayList<>();
         itemsList.add("Test Item");
         itemsList.add("Test Item 2");
