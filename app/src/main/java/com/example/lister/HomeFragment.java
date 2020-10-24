@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -18,6 +19,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 
 import java.util.ArrayList;
@@ -39,6 +42,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         Log.d("Lifecycle", "HomeFragment - onCreateView");
 
+        //get singleton instance of database
         ListDatabaseHelper helper = ListDatabaseHelper.getInstance(getContext());
 
         // Inflate the layout for this fragment
@@ -61,14 +65,23 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v){
+        //get singleton instance of database
+        ListDatabaseHelper helper = ListDatabaseHelper.getInstance(getContext());
+
         if(v == v.findViewById(R.id.newListButton)) {
             Log.d("Lifecycle", "HomeFragment - clicked newListButton");
-            HomeFragmentDirections.EditList action = HomeFragmentDirections.editList();
-            Navigation.findNavController(v).navigate(action);
+            helper.addList("defaultList", listOfListsArr.size() + 1);
         } else {
             Log.d("Lifecycle", "HomeFragment - onClick");
+            HomeFragmentDirections.EditList action = HomeFragmentDirections.editList();
             //Clicked on an already created list or maybe settings button or something.
         }
+        //Refresh fragment view
+        FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+        if (Build.VERSION.SDK_INT >= 26) {
+            ft.setReorderingAllowed(false);
+        }
+        ft.detach(this).attach(this).commit();
     }
 
     private void setListViewListener(final ListView listOfListsView, final List<String> listOfListsArr){

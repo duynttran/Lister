@@ -62,14 +62,16 @@ public class ListDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void addList(String list) {
+    public void addList(String list, int id) {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
 
         try {
             ContentValues values = new ContentValues();
             values.put(ListerDatabase.List.LIST_NAME, list);
-            values.put(ListerDatabase.List._ID,1);
+            values.put(ListerDatabase.List._ID,id);
+            db.insertOrThrow(ListerDatabase.List.TABLE_NAME, null, values);
+            db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d("Lifecycle", "Unable to add list to database");
         } finally {
