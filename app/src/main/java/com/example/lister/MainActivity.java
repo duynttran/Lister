@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Lifecycle", "MainActivity - onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
     }
 
     @Override
