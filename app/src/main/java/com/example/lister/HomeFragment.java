@@ -1,6 +1,7 @@
 package com.example.lister;
 
 import android.app.Dialog;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -26,11 +27,11 @@ import java.util.Objects;
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
     List<String> listOfListsArr;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d("Lifecycle", "HomeFragment - onCreate");
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -38,14 +39,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         Log.d("Lifecycle", "HomeFragment - onCreateView");
 
+        ListDatabaseHelper helper = ListDatabaseHelper.getInstance(getContext());
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         // Populate list of lists
-        listOfListsArr = new ArrayList<>();
-        listOfListsArr.add("Test List");
-        listOfListsArr.add("Test List 2");
-        listOfListsArr.add("Test List 3");
+        listOfListsArr = helper.getAllLists();
         ListView listOfListsView = view.findViewById(R.id.listOfLists);
         if(getContext() != null) {
             listOfListsView.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, listOfListsArr));

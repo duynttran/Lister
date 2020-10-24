@@ -1,11 +1,17 @@
 package com.example.lister;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ListDatabaseHelper extends SQLiteOpenHelper {
 
@@ -54,5 +60,44 @@ public class ListDatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + ListerDatabase.Item.TABLE_NAME);
             onCreate(db);
         }
+    }
+
+    public void addList(String list) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+
+        try {
+            ContentValues values = new ContentValues();
+            values.put(ListerDatabase.List.LIST_NAME, list);
+            values.put(ListerDatabase.List._ID,1);
+        } catch (Exception e) {
+            Log.d("Lifecycle", "Unable to add list to database");
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public List<String> getAllLists() {
+        SQLiteDatabase db = getReadableDatabase();
+        List<String> lists = new ArrayList<>();
+        String LIST_QUERY = String.format("SELECT * FROM %s", ListerDatabase.List.TABLE_NAME);
+        Cursor cursor = db.rawQuery(LIST_QUERY, null);
+
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    String list = cursor.getString(cursor.getColumnIndex(ListerDatabase.List.LIST_NAME));
+                    lists.add(list);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.d("Lifecycle", "Unable to retrieve lists from database");
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+
+        return lists;
     }
 }
