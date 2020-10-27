@@ -10,12 +10,14 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ListDatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "Lister.db";
     private static ListDatabaseHelper sInstance;
 
@@ -39,10 +41,10 @@ public class ListDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String SQL_CREATE_LISTS = "CREATE TABLE " + ListerDatabase.List.TABLE_NAME + " (" +
-            ListerDatabase.List._ID + " INTEGER PRIMARY KEY NOT NULL," +
+            ListerDatabase.List._ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
             ListerDatabase.List.LIST_NAME + " TEXT)";
         String SQL_CREATE_ITEMS = "CREATE TABLE " + ListerDatabase.Item.TABLE_NAME + " (" +
-            ListerDatabase.Item._ID + " INTEGER PRIMARY KEY NOT NULL," +
+            ListerDatabase.Item._ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
             ListerDatabase.Item.ITEM_NAME + " TEXT," +
             ListerDatabase.Item.ITEM_QUANTITY + " INTEGER," +
             ListerDatabase.Item.ITEM_PRICE + " FLOAT," +
@@ -62,26 +64,25 @@ public class ListDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void addList(String list, int id) {
+    public void addList(String list) {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
 
         try {
             ContentValues values = new ContentValues();
             values.put(ListerDatabase.List.LIST_NAME, list);
-            values.put(ListerDatabase.List._ID,id);
             db.insertOrThrow(ListerDatabase.List.TABLE_NAME, null, values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d("Lifecycle", "Unable to add list to database");
+            Log.d("Database", "Unable to add list to database");
         } finally {
             db.endTransaction();
         }
     }
 
-    public List<String> getAllLists() {
+    public List<AbstractMap.SimpleEntry<String, Integer>> getAllLists() {
         SQLiteDatabase db = getReadableDatabase();
-        List<String> lists = new ArrayList<>();
+        List<AbstractMap.SimpleEntry<String, Integer>> lists = new ArrayList<>();
         String LIST_QUERY = String.format("SELECT * FROM %s", ListerDatabase.List.TABLE_NAME);
         Cursor cursor = db.rawQuery(LIST_QUERY, null);
 
@@ -89,11 +90,12 @@ public class ListDatabaseHelper extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
                     String list = cursor.getString(cursor.getColumnIndex(ListerDatabase.List.LIST_NAME));
-                    lists.add(list);
+                    int id = Integer.parseInt(cursor.getString(cursor.getColumnIndex(ListerDatabase.List._ID)));
+                    lists.add(new AbstractMap.SimpleEntry<String, Integer>(list, id));
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            Log.d("Lifecycle", "Unable to retrieve lists from database");
+            Log.d("Database", "Unable to retrieve lists from database");
         } finally {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
@@ -101,5 +103,28 @@ public class ListDatabaseHelper extends SQLiteOpenHelper {
         }
 
         return lists;
+    }
+
+    public int updateListName(String list, int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(ListerDatabase.List.LIST_NAME, list);
+        return db.update(ListerDatabase.List.TABLE_NAME, values,
+                ListerDatabase.List._ID + "= " + id, null);
+    }
+
+    public void deleteList(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+
+        try {
+            // Order of deletions is important when foreign key relationships exist.
+            db.delete(ListerDatabase.List.TABLE_NAME, ListerDatabase.List._ID + "=?", new String[]{String.valueOf(id)});
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d("Lifecycle", "Unable to delete all lists");
+        } finally {
+            db.endTransaction();
+        }
     }
 }
