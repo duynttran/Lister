@@ -34,6 +34,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     List<AbstractMap.SimpleEntry<String, Integer>> listOfListsArr;
     int editingListId = -1;
     ListDatabaseHelper helper;
+    ArrayAdapter listAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         listOfListsArr = helper.getAllLists();
         ListView listOfListsView = view.findViewById(R.id.listOfLists);
         if(getContext() != null) {
-            listOfListsView.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, listOfListsArr));
+            listAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, listOfListsArr);
+            listOfListsView.setAdapter(listAdapter);
             setListViewListener(listOfListsView, listOfListsArr);
         }
 
@@ -109,6 +111,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                             Log.d("Lifecycle", "HomeFragment - EditListOfLists - clicked deleteButton");
                             editListOfList.hide();
                             helper.deleteList(editingListId);
+                            listAdapter.clear();
+                            listAdapter.addAll(helper.getAllLists());
                         }
                     });
                     editListOfList.findViewById(R.id.enterButton).setOnClickListener(new View.OnClickListener() {
@@ -117,6 +121,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                             Log.d("Lifecycle", "HomeFragment - EditListOfLists - clicked enterButton");
                             editListOfList.hide();
                             helper.updateListName(editText.getText().toString(), editingListId);
+                            listAdapter.clear();
+                            listAdapter.addAll(helper.getAllLists());
                         }
                     });
                 }
