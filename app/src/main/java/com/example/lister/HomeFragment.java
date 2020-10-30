@@ -1,6 +1,7 @@
 package com.example.lister;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,9 +34,9 @@ import java.util.Objects;
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
     List<AbstractMap.SimpleEntry<String, Integer>> listOfListsArr;
-    int editingListId = -1;
+    AbstractMap.SimpleEntry<String, Integer> editingList;
     ListDatabaseHelper helper;
-    ArrayAdapter listAdapter;
+    ListAdapter listAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,7 +60,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         listOfListsArr = helper.getAllLists();
         ListView listOfListsView = view.findViewById(R.id.listOfLists);
         if(getContext() != null) {
-            listAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, listOfListsArr);
+            listAdapter = new ListAdapter(getContext(), listOfListsArr);
             listOfListsView.setAdapter(listAdapter);
             setListViewListener(listOfListsView, listOfListsArr);
         }
@@ -92,12 +94,30 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         ft.detach(this).attach(this).commit();
     }
 
+    private static class ListAdapter extends ArrayAdapter<AbstractMap.SimpleEntry<String, Integer>> {
+        public ListAdapter(Context context, List<AbstractMap.SimpleEntry<String, Integer>> list) {
+            super(context, android.R.layout.simple_list_item_1, list);
+        }
+
+        @Override
+        public View getView(int pos, View convertView, ViewGroup parent) {
+            if(convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+            }
+
+            TextView textView = convertView.findViewById(android.R.id.text1);
+            textView.setText(Objects.requireNonNull(getItem(pos)).getKey());
+
+            return convertView;
+        }
+    }
+
     private void setListViewListener(final ListView listOfListsView, final List<AbstractMap.SimpleEntry<String, Integer>> list){
         listOfListsView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(final AdapterView<?> adapterView, View view, int i, long l) {
                 if(getContext() != null) {
-                    editingListId = list.get(i).getValue();
+                    editingList = list.get(i);
                     final Dialog editListOfList = new Dialog(getContext(), android.R.style.Theme_Black_NoTitleBar);
                     Objects.requireNonNull(editListOfList.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
                     editListOfList.setContentView(R.layout.edit_list_of_list);
@@ -110,9 +130,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         public void onClick(View view) {
                             Log.d("Lifecycle", "HomeFragment - EditListOfLists - clicked deleteButton");
                             editListOfList.hide();
-                            helper.deleteList(editingListId);
-                            listAdapter.clear();
-                            listAdapter.addAll(helper.getAllLists());
+                            helper.deleteList(editingList.getValue());
+                            listAdapter.remove(editingList);
                         }
                     });
                     editListOfList.findViewById(R.id.enterButton).setOnClickListener(new View.OnClickListener() {
@@ -120,9 +139,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         public void onClick(View view) {
                             Log.d("Lifecycle", "HomeFragment - EditListOfLists - clicked enterButton");
                             editListOfList.hide();
-                            helper.updateListName(editText.getText().toString(), editingListId);
-                            listAdapter.clear();
-                            listAdapter.addAll(helper.getAllLists());
+                            String newName = editText.getText().toString();
+                            helper.updateListName(newName, editingList.getValue());
+                            int pos = listAdapter.getPosition(editingList);
+                            listAdapter.remove(editingList);
+                            listAdapter.insert(new AbstractMap.SimpleEntry<>(newName, pos), pos);
                         }
                     });
                 }
