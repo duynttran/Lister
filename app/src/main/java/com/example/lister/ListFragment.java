@@ -25,8 +25,8 @@ import java.util.Objects;
 public class ListFragment extends Fragment{
 
     String list;
-    List<String> itemsList;
-    ArrayAdapter<String> items;
+    List<ListItem> itemsList;
+    ListItemAdapter itemsAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,27 +72,27 @@ public class ListFragment extends Fragment{
 
         // Populate items list
         itemsList = new ArrayList<>();
-        itemsList.add("Test Item");
-        itemsList.add("Test Item 2");
-        itemsList.add("Test Item 3");
+        itemsList.add(new ListItem("Cookies", 1, 4.32));
+        itemsList.add(new ListItem("Breasts", 2, 7.13));
+        itemsList.add(new ListItem("Drums", 3, 9.76));
         ListView listView = view.findViewById(R.id.listOfItems);
         if(getContext() != null) {
-            items = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, itemsList);
-            listView.setAdapter(items);
+            itemsAdapter = new ListItemAdapter(getContext(), R.layout.listview_item, itemsList);
+            listView.setAdapter(itemsAdapter);
             setListViewListener(listView, itemsList);
         }
 
         view.findViewById(R.id.newItemButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                items.add("New Item");
+                itemsAdapter.add(new ListItem("default", 0, 0.00));
             }
         });
 
         return view;
     }
 
-    private void setListViewListener(final ListView listView, final List<String> items){
+    private void setListViewListener(final ListView listView, final List<ListItem> items){
         //Todo: These items will have other views in them and may actually be a custom list view.
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {

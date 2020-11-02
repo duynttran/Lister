@@ -7,31 +7,31 @@
 
     <Spinner
         android:id="@+id/item_count"
-        android:layout_width="match_parent"
+        android:layout_width="360dp"
         android:layout_height="match_parent"
         android:layout_weight="1.5"
         android:drawSelectorOnTop="true"
-        android:entries="@array/count_array"/>
+        android:entries="@array/count_array" />
 
     <EditText
         android:id="@+id/item_name"
-        android:layout_width="608dp"
+        android:layout_width="500dp"
         android:layout_height="match_parent"
         android:layout_weight="1.5"
+        android:autofillHints="@string/item_name"
         android:ems="10"
         android:hint="@string/item_name"
-        android:inputType="text"
-        android:autofillHints="@string/item_name" />
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/item_price"
-        android:layout_width="match_parent"
+        android:layout_width="344dp"
         android:layout_height="match_parent"
-        android:inputType="numberDecimal"
         android:layout_weight="1.5"
-        android:ems="10"
         android:autofillHints="0.00"
-        android:hint="@string/default_price"/>
+        android:ems="10"
+        android:hint="@string/default_price"
+        android:inputType="numberDecimal" />
 
     <ImageButton
         android:id="@+id/photo_button"
