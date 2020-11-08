@@ -7,11 +7,14 @@ public class ListItem {
     private String name;
     private int quantity;
     private double price;
+    private int itemId;
+    private int listId;
 
-    public ListItem(String name, int quantity, double price){
+    public ListItem(String name, int quantity, double price, int listId){
         this.name = name;
         this.quantity = quantity;
         this.price = price;
+        this.listId = listId;
     }
 
     public String getName() {
@@ -36,5 +39,15 @@ public class ListItem {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public void setItemId(int id) { this.itemId = id; }
+
+    public int getItemId() {
+        return itemId;
+    }
+
+    public int getListId() {
+        return listId;
     }
 }
