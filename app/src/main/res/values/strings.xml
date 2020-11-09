@@ -11,4 +11,5 @@
     <string name="default_price">0.00</string>
     <string name="default_count">1</string>
     <string name="camera_button_description">Opens camera for scanning prices</string>
+    <string name="defaultTotalPrice">$0.00</string>
 </resources>

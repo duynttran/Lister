@@ -155,7 +155,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Launch list fragment
                 HomeFragmentDirections.EditList action = HomeFragmentDirections.editList();
-                action.setList(list.get(i).getKey());
+                action.setList(list.get(i).getValue());
                 Navigation.findNavController(view).navigate(action);
             }
         });

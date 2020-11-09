@@ -15,8 +15,8 @@
             app:destination="@id/list">
             <argument
                 android:name="list"
-                app:argType="string"
-                android:defaultValue="" />
+                app:argType="integer"
+                android:defaultValue="0" />
         </action>
     </fragment>
 
@@ -27,8 +27,8 @@
         tools:layout="@layout/fragment_list">
         <argument
             android:name="list"
-            app:argType="string"
-            android:defaultValue="" />
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 
 </navigation>
