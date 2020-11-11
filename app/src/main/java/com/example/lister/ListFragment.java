@@ -79,7 +79,7 @@ public class ListFragment extends Fragment{
         ListView listView = view.findViewById(R.id.listOfItems);
         if(getContext() != null) {
             itemsList = helper.getListItems(listId);
-            itemsAdapter = new ListItemAdapter(getContext(), R.layout.listview_item, itemsList);
+            itemsAdapter = new ListItemAdapter(getActivity(), getContext(), R.layout.listview_item, itemsList);
             listView.setAdapter(itemsAdapter);
             setListViewListener(listView, itemsList);
         }
