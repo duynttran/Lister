@@ -1,6 +1,12 @@
 package com.example.lister;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,15 +21,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 
+import java.io.File;
 import java.util.List;
 import java.util.Objects;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * ListItemAdapter used for handling custom listView list items
  */
 public class ListItemAdapter extends ArrayAdapter<ListItem> {
     private Context mContext;
+    private Activity mActivity;
     int mResource;
     ListDatabaseHelper helper;
     TextView totalPriceView;
@@ -32,8 +43,9 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
     /**
      * Default constructor for ListItemAdapter
      */
-    public ListItemAdapter(Context context, int resource, List<ListItem> objects){
+    public ListItemAdapter(Activity activity, Context context, int resource, List<ListItem> objects){
         super(context, resource, objects);
+        mActivity = activity;
         mContext = context;
         mResource = resource;
     }
@@ -117,6 +129,17 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
                 updateTotalPrice();
             }
         });
+
+        //Take a photo, send it to the API, and update fields accordingly from the response.
+        photoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Since the callback from the camera has to be in the activity, we need to send
+                //the item id there. That way we can update the item from the activity after taking photo and analyzing it.
+                MainActivity.itemIdForPhoto = itemId;
+                startCamera();
+            }
+        });
     }
 
     /**
@@ -142,5 +165,31 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
             }
             totalPriceView.setText(String.format("$%.2f", totalPrice));
         }
+    }
+
+    /**
+     *
+     * Camera and Cloud Vision API stuff.
+     * From Google's Android Sample project at https://github.com/GoogleCloudPlatform/cloud-vision/tree/master/android
+     *
+     */
+
+    public void startCamera() {
+        if (PermissionUtils.requestPermission(
+                mActivity,
+                2,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA)) {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            Uri photoUri = FileProvider.getUriForFile(mContext, mContext.getApplicationContext().getPackageName() + ".provider", getCameraFile());
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            mActivity.startActivityForResult(intent, 3);
+        }
+    }
+
+    public File getCameraFile() {
+        File dir = mActivity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return new File(dir, "temp.jpg");
     }
 }
