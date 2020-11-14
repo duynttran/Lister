@@ -219,6 +219,25 @@ public class ListDatabaseHelper extends SQLiteOpenHelper {
                 ListerDatabase.Item._ID + "= " + id, null);
     }
 
+    public String getItemPrice(int id){
+        SQLiteDatabase db = getReadableDatabase();
+        String LIST_QUERY = String.format("SELECT itemPRICE FROM %s WHERE %s=%s", ListerDatabase.Item.TABLE_NAME, ListerDatabase.Item._ID,id);
+        Cursor cursor = db.rawQuery(LIST_QUERY, null);
+        String price = "";
+        try {
+            if (cursor.moveToFirst()) {
+                price = cursor.getString(cursor.getColumnIndex(ListerDatabase.Item.ITEM_PRICE));
+            }
+        } catch (Exception e) {
+            Log.d("Database", "Unable to retrieve item price from database");
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return price;
+    }
+
     public void deleteItem(int id){
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();

@@ -1,8 +1,10 @@
 package com.example.lister;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -101,7 +104,14 @@ public class ListFragment extends Fragment{
 
         return view;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        for(ListItem item : itemsList) {
+            item.setPrice(Double.parseDouble(helper.getItemPrice(item.getItemId())));
+        }
+    }
     private void setListViewListener(final ListView listView, final List<ListItem> itemsList){
         //Removes list item on long click
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
