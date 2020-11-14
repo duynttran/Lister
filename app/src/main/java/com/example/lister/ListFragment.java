@@ -91,11 +91,13 @@ public class ListFragment extends Fragment{
         view.findViewById(R.id.newItemButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                itemsAdapter.clear();
+                itemsAdapter.addAll(helper.getListItems(listId));
+                itemsAdapter.notifyDataSetChanged();
                 ListItem item = new ListItem("default", 0, 0.00, listId);
                 int itemId = helper.addItem(item);
                 item.setItemId(itemId);
                 itemsAdapter.add(item);
-                itemsAdapter.notifyDataSetChanged();
             }
         });
 
@@ -108,6 +110,9 @@ public class ListFragment extends Fragment{
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if(getContext() != null) {
+                    itemsAdapter.clear();
+                    itemsAdapter.addAll(helper.getListItems(listId));
+                    itemsAdapter.notifyDataSetChanged();
                     ListItem removed = itemsList.remove(i);
                     itemsAdapter.remove(removed);
                     helper.deleteItem(removed.getItemId());
