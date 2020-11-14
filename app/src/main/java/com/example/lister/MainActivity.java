@@ -2,6 +2,7 @@ package com.example.lister;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     public static int itemIdForPhoto = -1;
     public static ListDatabaseHelper helper;
     public static Context itemContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("Lifecycle", "MainActivity - onCreate");
@@ -205,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
         return annotateRequest;
     }
 
-    private static class LableDetectionTask extends AsyncTask<Object, Void, String> {
+    private class LableDetectionTask extends AsyncTask<Object, Void, String> {
         private final WeakReference<MainActivity> mActivityWeakReference;
         private Vision.Images.Annotate mRequest;
 
@@ -236,6 +239,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("CloudVision", "Success! " + result);
                 helper = ListDatabaseHelper.getInstance(itemContext);
                 helper.updateItemPrice(getPrice(result), itemIdForPhoto);
+                //ListFragment fm = (ListFragment) getSupportFragmentManager().findFragmentById(R.id.list);
+                //fm.refresh();
             }
         }
     }

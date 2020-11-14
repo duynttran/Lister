@@ -38,6 +38,7 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
     private Context mContext;
     private Activity mActivity;
     int mResource;
+    ListFragment mListFragment;
     ListDatabaseHelper helper;
     TextView totalPriceView;
     int listId;
@@ -45,11 +46,12 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
     /**
      * Default constructor for ListItemAdapter
      */
-    public ListItemAdapter(Activity activity, Context context, int resource, List<ListItem> objects){
+    public ListItemAdapter(Activity activity, Context context, int resource, List<ListItem> objects, ListFragment listFragment){
         super(context, resource, objects);
         mActivity = activity;
         mContext = context;
         mResource = resource;
+        mListFragment = listFragment;
     }
 
     @NonNull
@@ -141,8 +143,8 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
                 MainActivity.itemIdForPhoto = itemId;
                 MainActivity.itemContext = getContext();
                 startCamera();
-                //editPrice.setText(helper.getItemPrice(itemId));
-
+                mListFragment.refresh();
+                Log.d("Price Parse", "Price changed");
                 updateTotalPrice();
             }
         });

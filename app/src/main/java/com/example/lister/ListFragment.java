@@ -1,9 +1,5 @@
 package com.example.lister;
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,16 +10,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ListFragment extends Fragment{
 
@@ -82,7 +75,7 @@ public class ListFragment extends Fragment{
         ListView listView = view.findViewById(R.id.listOfItems);
         if(getContext() != null) {
             itemsList = helper.getListItems(listId);
-            itemsAdapter = new ListItemAdapter(getActivity(), getContext(), R.layout.listview_item, itemsList);
+            itemsAdapter = new ListItemAdapter(getActivity(), getContext(), R.layout.listview_item, itemsList, this);
             listView.setAdapter(itemsAdapter);
             setListViewListener(listView, itemsList);
         }
@@ -104,14 +97,6 @@ public class ListFragment extends Fragment{
 
         return view;
     }
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        for(ListItem item : itemsList) {
-            item.setPrice(Double.parseDouble(helper.getItemPrice(item.getItemId())));
-        }
-    }
     private void setListViewListener(final ListView listView, final List<ListItem> itemsList){
         //Removes list item on long click
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -125,6 +110,18 @@ public class ListFragment extends Fragment{
                 return true;
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+    public void refresh() {
+        FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+        if (Build.VERSION.SDK_INT >= 26) {
+            ft.setReorderingAllowed(false);
+        }
+        ft.detach(this).attach(this).commit();
     }
 
     public void hideKeyboard() {
