@@ -3,6 +3,7 @@ package com.example.lister;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -11,6 +12,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -41,7 +44,8 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
 
     public static int itemIdForPhoto = -1;
-
+    public static ListDatabaseHelper helper;
+    public static Context itemContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("Lifecycle", "MainActivity - onCreate");
@@ -185,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             annotateImageRequest.setFeatures(new ArrayList<GoogleCloudVisionV1p2beta1Feature>() {{
                 GoogleCloudVisionV1p2beta1Feature textDetection = new GoogleCloudVisionV1p2beta1Feature();
                 textDetection.setType("DOCUMENT_TEXT_DETECTION");
-                textDetection.setMaxResults(50);
+                textDetection.setMaxResults(10);
                 add(textDetection);
             }});
 
@@ -229,8 +233,9 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             MainActivity activity = mActivityWeakReference.get();
             if (activity != null && !activity.isFinishing()) {
-                //Todo: Do something with the result.
                 Log.d("CloudVision", "Success! " + result);
+                helper = ListDatabaseHelper.getInstance(itemContext);
+                helper.updateItemPrice(getPrice(result), itemIdForPhoto);
             }
         }
     }
@@ -249,5 +254,30 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return message.toString();
+    }
+
+    private static double getPrice(String message) {
+        double price = -1.0;
+        String[] texts = message.split("\n");
+        String prev = texts[0];
+        for (String s : texts) {
+            if (s.equals("PRICE") || s.equals("$")) {
+                prev = s;
+                Log.d("Price Parse", "Primed for price with tag: " + prev);
+                continue;
+            }
+            //TODO: Better discrimination
+            if (prev.equals("PRICE") || prev.equals("$")) {
+                try {
+                    price = Double.parseDouble(s);
+                    Log.d("Price Parse", "Price found: " + price);
+                    break;
+                } catch (Exception e) {
+                    continue;
+                }
+            }
+        }
+        if (price == -1.0) Log.d("Price Parse", "No Price found");
+        return price;
     }
 }
