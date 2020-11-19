@@ -88,9 +88,6 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
     /**
      * Sets the listeners for custom listView components spinner item quantity,
      * edit text item name, edit text price, and image button camera button
-     * TODO: Implement camera button
-     *       Bug when pressing add new item button while editing name/price
-     *       Hide keyboard on focus change
      * @param itemId the primary key of database table item
      * @param editName the EditText xml element for naming item
      * @param spinnerQuantity the Spinner xml element for setting item quantity
