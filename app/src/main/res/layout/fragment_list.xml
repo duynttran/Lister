@@ -27,26 +27,6 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/newItemButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textInputLayout"
-        android:layout_marginTop="16dp"
-        android:text="@string/add"
-        android:textSize="24sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/listOfItems" />
-
-    <ListView
-        android:id="@+id/listOfItems"
-        android:layout_width="409dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
-
-    <Button
         android:id="@+id/enterButton"
         android:layout_width="45dp"
         android:layout_height="45dp"
@@ -55,6 +35,37 @@
         app:layout_constraintBottom_toBottomOf="@+id/textInputLayout"
         app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
         app:layout_constraintTop_toTopOf="@+id/textInputLayout" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/listItemLinearLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="480dp"
+        android:layout_weight="0.1"
+        app:layout_constraintBottom_toTopOf="@+id/newItemButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
+
+        <ListView
+            android:id="@+id/listOfItems"
+            android:layout_width="409dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/newItemButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textInputLayout"
+        android:text="@string/add"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/listItemLinearLayout" />
 
     <TextView
         android:id="@+id/totalPrice"
