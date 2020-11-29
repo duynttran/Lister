@@ -95,9 +95,6 @@ public class ListFragment extends Fragment{
         view.findViewById(R.id.newItemButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                itemsAdapter.clear();
-                itemsAdapter.addAll(helper.getListItems(listId));
-                itemsAdapter.notifyDataSetChanged();
                 ListItem item = new ListItem("default", 0, 0.00, listId);
                 int itemId = helper.addItem(item);
                 item.setItemId(itemId);
@@ -156,6 +153,7 @@ public class ListFragment extends Fragment{
             itemsAdapter.updateTotalPrice();
         } else {
             Log.d("Price Discovered", "Couldn't find the item.");
+
         }
     }
 
@@ -168,6 +166,10 @@ public class ListFragment extends Fragment{
      */
     public void priceDiscoveryFailed(int itemId, int itemPosition) {
         Log.d("Price Discovery Failed", "Item " + itemId);
-
+        ListItem item = itemsAdapter.getItem(itemPosition);
+        if(item != null && item.getItemId() == itemId) {
+            itemsAdapter.setFailurePosition(itemPosition);
+            itemsAdapter.notifyDataSetChanged();
+        }
     }
 }

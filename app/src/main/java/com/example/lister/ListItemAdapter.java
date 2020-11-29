@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -17,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -41,6 +44,7 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
     ListDatabaseHelper helper;
     TextView totalPriceView;
     int listId;
+    private int failurePosition = -1;
 
     /**
      * Default constructor for ListItemAdapter
@@ -80,7 +84,11 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
         spinnerQuantity.setSelection(quantity);
         editPrice.setText(String.valueOf(price));
 
-        setItemListener(itemId, editName, spinnerQuantity, editPrice, photoButton, position);
+        setItemListener(itemId, convertView, editName, spinnerQuantity, editPrice, photoButton, position);
+
+        if(position == failurePosition) {
+            convertView.setBackgroundColor(Color.rgb(255, 68, 68));
+        }
 
         return convertView;
     }
@@ -89,13 +97,14 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
      * Sets the listeners for custom listView components spinner item quantity,
      * edit text item name, edit text price, and image button camera button
      * @param itemId the primary key of database table item
+     * @param convertView the view of the entire row
      * @param editName the EditText xml element for naming item
      * @param spinnerQuantity the Spinner xml element for setting item quantity
      * @param editPrice the EditText xml element for setting item price
      * @param photoButton the ImageButton xml element for camera usage
      * @param itemPosition the position of the item in the list
      */
-    private void setItemListener(final int itemId, final EditText editName, final Spinner spinnerQuantity,
+    private void setItemListener(final int itemId, final View convertView, final EditText editName, final Spinner spinnerQuantity,
                                  final EditText editPrice, final ImageButton photoButton, final int itemPosition){
         //Select item quantity via Spinner
         spinnerQuantity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -126,6 +135,8 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
             public void onFocusChange(View view, boolean b) {
                 double itemPrice = Double.parseDouble(editPrice.getText().toString());
                 helper.updateItemPrice(itemPrice, itemId);
+                convertView.setBackgroundColor(Color.TRANSPARENT);
+                failurePosition = -1;
                 updateTotalPrice();
             }
         });
@@ -139,6 +150,8 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
                 MainActivity.itemIdForPhoto = itemId;
                 MainActivity.itemContext = getContext();
                 MainActivity.itemPosition = itemPosition;
+                convertView.setBackgroundColor(Color.TRANSPARENT);
+                failurePosition = -1;
                 startCamera();
                 //editPrice.setText(helper.getItemPrice(itemId));
 
@@ -195,5 +208,9 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
     public File getCameraFile() {
         File dir = mActivity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         return new File(dir, "temp.jpg");
+    }
+
+    public void setFailurePosition(int failurePosition) {
+        this.failurePosition = failurePosition;
     }
 }
