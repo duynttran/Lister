@@ -44,8 +44,10 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
 
     public static int itemIdForPhoto = -1;
+    public static int itemPosition = -1;
     public static ListDatabaseHelper helper;
     public static Context itemContext;
+    public static ListFragment listFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("Lifecycle", "MainActivity - onCreate");
@@ -234,8 +236,24 @@ public class MainActivity extends AppCompatActivity {
             MainActivity activity = mActivityWeakReference.get();
             if (activity != null && !activity.isFinishing()) {
                 Log.d("CloudVision", "Success! " + result);
-                helper = ListDatabaseHelper.getInstance(itemContext);
-                helper.updateItemPrice(getPrice(result), itemIdForPhoto);
+                double price = getPrice(result);
+                if(price != -1.0) {
+                    helper = ListDatabaseHelper.getInstance(itemContext);
+                    helper.updateItemPrice(getPrice(result), itemIdForPhoto);
+
+                    //Update UI.
+                    if(listFragment != null) {
+                        listFragment.priceDiscovered(itemIdForPhoto, itemPosition, price);
+                    } else {
+                        Log.d("Price Conclusion", "Price found but list fragment was null.");
+                    }
+                } else {
+                    if(listFragment != null) {
+                        listFragment.priceDiscoveryFailed(itemIdForPhoto, itemPosition);
+                    } else {
+                        Log.d("Price Conclusion", "Price not found and list fragment was null.");
+                    }
+                }
             }
         }
     }
@@ -271,6 +289,15 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     price = Double.parseDouble(s);
                     Log.d("Price Parse", "Price found: " + price);
+                    break;
+                } catch (Exception e) {
+                    continue;
+                }
+            }
+            if(s.length() > 0 && s.charAt(0) == '$') {
+                try {
+                    price = Double.parseDouble(s.substring(1));
+                    Log.d("Price Parse", "Price found from $: " + price);
                     break;
                 } catch (Exception e) {
                     continue;

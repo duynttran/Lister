@@ -35,6 +35,7 @@ public class ListFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d("Lifecycle", "ListFragment - onCreate");
+        MainActivity.listFragment = this;
         super.onCreate(savedInstanceState);
     }
 
@@ -94,9 +95,6 @@ public class ListFragment extends Fragment{
         view.findViewById(R.id.newItemButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                itemsAdapter.clear();
-                itemsAdapter.addAll(helper.getListItems(listId));
-                itemsAdapter.notifyDataSetChanged();
                 ListItem item = new ListItem("default", 0, 0.00, listId);
                 int itemId = helper.addItem(item);
                 item.setItemId(itemId);
@@ -136,5 +134,42 @@ public class ListFragment extends Fragment{
         InputMethodManager inputMethodManager = (InputMethodManager) requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
         assert inputMethodManager != null;
         inputMethodManager.hideSoftInputFromWindow(requireView().getWindowToken(), 0);
+    }
+
+    /**
+     * Method called from MainActivity when a price is found successfully following the call to the
+     * cloud vision API.
+     * Sets the price in the UI and updates the total.
+     * @param itemId - the id of the item
+     * @param price - the discovered price from the photo
+     * @param itemPosition - the position of the item in the list
+     */
+    public void priceDiscovered(int itemId, int itemPosition, double price) {
+        Log.d("Price Discovered", "Item " + itemId + " is $" + price);
+        ListItem item = itemsAdapter.getItem(itemPosition);
+        if(item != null && item.getItemId() == itemId) {
+            item.setPrice(price);
+            itemsAdapter.notifyDataSetChanged();
+            itemsAdapter.updateTotalPrice();
+        } else {
+            Log.d("Price Discovered", "Couldn't find the item.");
+
+        }
+    }
+
+    /**
+     * Method called from MainActivity when there is a failure somewhere in the process of finding
+     * the price using the cloud vision API.
+     * Marks the field with a warning color as indication.
+     * @param itemId - the id of the item
+     * @param itemPosition - the position of the item in the list
+     */
+    public void priceDiscoveryFailed(int itemId, int itemPosition) {
+        Log.d("Price Discovery Failed", "Item " + itemId);
+        ListItem item = itemsAdapter.getItem(itemPosition);
+        if(item != null && item.getItemId() == itemId) {
+            itemsAdapter.setFailurePosition(itemPosition);
+            itemsAdapter.notifyDataSetChanged();
+        }
     }
 }
