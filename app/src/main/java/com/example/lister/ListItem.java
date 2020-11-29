@@ -30,7 +30,11 @@ public class ListItem {
     }
 
     public void setQuantity(int quantity) {
-        this.quantity = quantity;
+        if(quantity < 0){
+            this.quantity = 0;
+        } else {
+            this.quantity = quantity;
+        }
     }
 
     public double getPrice() {
@@ -38,7 +42,11 @@ public class ListItem {
     }
 
     public void setPrice(double price) {
-        this.price = price;
+        if(price < 0){
+            this.price = 0;
+        } else {
+            this.price = price;
+        }
     }
 
     public void setItemId(int id) { this.itemId = id; }
