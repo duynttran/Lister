@@ -80,7 +80,7 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
         spinnerQuantity.setSelection(quantity);
         editPrice.setText(String.valueOf(price));
 
-        setItemListener(itemId, editName, spinnerQuantity, editPrice, photoButton);
+        setItemListener(itemId, editName, spinnerQuantity, editPrice, photoButton, position);
 
         return convertView;
     }
@@ -93,9 +93,10 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
      * @param spinnerQuantity the Spinner xml element for setting item quantity
      * @param editPrice the EditText xml element for setting item price
      * @param photoButton the ImageButton xml element for camera usage
+     * @param itemPosition the position of the item in the list
      */
     private void setItemListener(final int itemId, final EditText editName, final Spinner spinnerQuantity,
-                                 final EditText editPrice, final ImageButton photoButton){
+                                 final EditText editPrice, final ImageButton photoButton, final int itemPosition){
         //Select item quantity via Spinner
         spinnerQuantity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -137,6 +138,7 @@ public class ListItemAdapter extends ArrayAdapter<ListItem> {
                 //the item id there. That way we can update the item from the activity after taking photo and analyzing it.
                 MainActivity.itemIdForPhoto = itemId;
                 MainActivity.itemContext = getContext();
+                MainActivity.itemPosition = itemPosition;
                 startCamera();
                 //editPrice.setText(helper.getItemPrice(itemId));
 
