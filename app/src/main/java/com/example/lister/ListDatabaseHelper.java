@@ -117,6 +117,7 @@ public class ListDatabaseHelper extends SQLiteOpenHelper {
 
         try {
             // Order of deletions is important when foreign key relationships exist.
+            db.delete(ListerDatabase.Item.TABLE_NAME, ListerDatabase.Item.LIST_ID_FK + "=?", new String[]{String.valueOf(id)});
             db.delete(ListerDatabase.List.TABLE_NAME, ListerDatabase.List._ID + "=?", new String[]{String.valueOf(id)});
             db.setTransactionSuccessful();
         } catch (Exception e) {
